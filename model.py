@@ -12,11 +12,20 @@ class EventDetector(nn.Module):
         self.lstm_hidden = lstm_hidden
         self.bidirectional = bidirectional
         self.dropout = dropout
-
+        print("init event detector")
         net = MobileNetV2(width_mult=width_mult)
-        state_dict_mobilenet = torch.load('mobilenet_v2.pth.tar')
+        # state_dict_mobilenet = torch.load('mobilenet_v2.pth.tar')
+        # if pretrain:
+        #     net.load_state_dict(state_dict_mobilenet)
         if pretrain:
-            net.load_state_dict(state_dict_mobilenet)
+            try:
+                from torch.hub import load_state_dict_from_url
+            except ImportError:
+                from torch.utils.model_zoo import load_url as load_state_dict_from_url
+            state_dict = load_state_dict_from_url(
+                'https://www.dropbox.com/s/47tyzpofuuyyv1b/mobilenetv2_1.0-f2a8633.pth.tar?dl=1', progress=True)
+            print("loaded state dict")
+            net.load_state_dict(state_dict,strict=False)
 
         self.cnn = nn.Sequential(*list(net.children())[0][:19])
         self.rnn = nn.LSTM(int(1280*width_mult if width_mult > 1.0 else 1280),

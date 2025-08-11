@@ -5,7 +5,7 @@ import torch
 from torch.utils.data import DataLoader
 from torchvision import transforms
 import os
-
+from tqdm import tqdm   
 
 if __name__ == '__main__':
 
@@ -26,7 +26,7 @@ if __name__ == '__main__':
                           dropout=False)
     freeze_layers(k, model)
     model.train()
-   # model.cuda()
+    model.cuda()
 
     dataset = GolfDB(data_file='data/train_split_{}.pkl'.format(split),
                      vid_dir='data/videos_160/',
@@ -54,8 +54,9 @@ if __name__ == '__main__':
 
     i = 0
     while i < iterations:
-        for sample in data_loader:
-            images, labels = sample['images'], sample['labels']#.cuda() ,.cuda()  remember to add back in to sample images if traingin with gpu
+        #for sample in data_loader:
+        for sample in tqdm(data_loader, desc=f"Epoch Progress",leave=True):    
+            images, labels = sample['images'].cuda(), sample['labels'].cuda() #,.cuda()  remember to add back in to sample images if traingin with gpu
             logits = model(images)
             labels = labels.view(bs*seq_length)
             loss = criterion(logits, labels)

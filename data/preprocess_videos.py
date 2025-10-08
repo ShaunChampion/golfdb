@@ -14,14 +14,17 @@ def preprocess_videos(anno_id, dim=160):
     """
 
     a = df.loc[df['id'] == anno_id]
-    bbox = a['bbox'][0]
-    events = a['events'][0]
+    #bbox = a['bbox'][0]
+    #events = a['events'][0]
+    bbox = a['bbox'].iloc[0]
+    events = a['events'].iloc[0]
 
     path = 'videos_{}/'.format(dim)
 
     if not os.path.isfile(os.path.join(path, "{}.mp4".format(anno_id))):
         print('Processing annotation id {}'.format(anno_id))
-        cap = cv2.VideoCapture(os.path.join(yt_video_dir, '{}.mp4'.format(a['youtube_id'][0])))
+        #cap = cv2.VideoCapture(os.path.join(yt_video_dir, '{}.mp4'.format(a['youtube_id'][0])))
+        cap = cv2.VideoCapture(os.path.join(yt_video_dir, '{}.mp4'.format(a['youtube_id'].iloc[0])))
         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
         out = cv2.VideoWriter(os.path.join(path, "{}.mp4".format(anno_id)),
                               fourcc, cap.get(cv2.CAP_PROP_FPS), (dim, dim))

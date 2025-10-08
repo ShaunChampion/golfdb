@@ -11,9 +11,9 @@ if __name__ == '__main__':
 
     # training configuration
     split = 1
-    iterations = 100  #2000
+    iterations = 2000  # no of iterations
     it_save = 100  # save model every 100 iterations
-    n_cpu = 6
+    n_cpu = 6  # number of CPU cores
     seq_length = 64
     bs = 22  # batch size
     k = 10  # frozen layers
@@ -38,12 +38,12 @@ if __name__ == '__main__':
     data_loader = DataLoader(dataset,
                              batch_size=bs,
                              shuffle=True,
-                             num_workers=n_cpu,
+                             num_workers= n_cpu,
                              drop_last=True)
 
     # the 8 golf swing events are classes 0 through 7, no-event is class 8
     # the ratio of events to no-events is approximately 1:35 so weight classes accordingly:
-    weights = torch.FloatTensor([1/8, 1/8, 1/8, 1/8, 1/8, 1/8, 1/8, 1/8, 1/35])#.cuda()
+    weights = torch.FloatTensor([1/8, 1/8, 1/8, 1/8, 1/8, 1/8, 1/8, 1/8, 1/35]).cuda()
     criterion = torch.nn.CrossEntropyLoss(weight=weights)
     optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=0.001)
 
@@ -53,9 +53,17 @@ if __name__ == '__main__':
         os.mkdir('models')
 
     i = 0
+
+    # filepath: c:\Users\shaun\git\golfdb\train.py
+ 
+    print("Testing DataLoader...")
+    sample = next(iter(data_loader))
+    print("Single batch loaded:", sample.keys())
+
     while i < iterations:
         #for sample in data_loader:
         for sample in tqdm(data_loader, desc=f"Epoch Progress",leave=True):    
+            print("Loaded a batch")
             images, labels = sample['images'].cuda(), sample['labels'].cuda() #,.cuda()  remember to add back in to sample images if traingin with gpu
             logits = model(images)
             labels = labels.view(bs*seq_length)

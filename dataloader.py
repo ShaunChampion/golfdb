@@ -19,13 +19,14 @@ class GolfDB(Dataset):
         return len(self.df)
 
     def __getitem__(self, idx):
+        
         a = self.df.loc[idx, :]  # annotation info
         events = a['events']
         events -= events[0]  # now frame #s correspond to frames in preprocessed video clips
 
         images, labels = [], []
         cap = cv2.VideoCapture(osp.join(self.vid_dir, '{}.mp4'.format(a['id'])))
-
+        
         if self.train:
             # random starting position, sample 'seq_length' frames
             start_frame = np.random.randint(events[-1] + 1)

@@ -1,0 +1,15 @@
+torch>=1.10
+torchvision
+tqdm
+moviepy
+imageio
+imageio-ffmpeg
+numpy
+pillow
+pandas
+scipy
+decorator
+proglog
+python-dotenv
+opencv-python
+# Add any other packages you use in your project below

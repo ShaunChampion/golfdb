@@ -59,10 +59,10 @@ if __name__ == '__main__':
                           lstm_hidden=256,
                           bidirectional=True,
                           dropout=False)
-
+    
+    model.cuda()
     save_dict = torch.load('models/swingnet_1800.pth.tar')
     model.load_state_dict(save_dict['model_state_dict'])
-    model.cuda()
     model.eval()
     PCE = eval(model, split, seq_length, n_cpu, True)
     print('Average PCE: {}'.format(PCE))
